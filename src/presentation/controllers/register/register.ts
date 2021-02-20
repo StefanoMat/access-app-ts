@@ -18,8 +18,15 @@ export class RegisterController implements Controller {
           return badRequest(new MissingParamError(field))
         }
       }
-
-      return ok('')
+      const { name, email, password, typeId, status } = httpRequest.body
+      const user = await this.addUser.add({
+        name,
+        email,
+        password,
+        typeId,
+        status
+      })
+      return ok(user)
     } catch (error) {
       return serverError(error)
     }
