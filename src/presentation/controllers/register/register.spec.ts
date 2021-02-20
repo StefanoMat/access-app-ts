@@ -111,4 +111,17 @@ describe('Register Controller', () => {
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(badRequest(new MissingParamError('status')))
   })
+
+  test('Should call AddUser with correct params', async () => {
+    const { sut, addUserStub } = makeSut()
+    const addSpy = jest.spyOn(addUserStub, 'add')
+    await sut.handle(makeFakeRequest())
+    expect(addSpy).toHaveBeenCalledWith({
+      name: 'any_name',
+      email: 'any_email@mail.com',
+      password: 'any_pass',
+      typeId: 'valid_type_id',
+      status: 'valid_status'
+    })
+  })
 })
