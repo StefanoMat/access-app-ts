@@ -4,6 +4,11 @@
         "module": "commonjs",
         "target": "es2019",
         "allowJs": true,
-        "esModuleInterop": true
+        "esModuleInterop": true,
+        "baseUrl": ".",
+        "paths": {
+            "@data/*": ["src/data/*"],
+            "@domain/*": ["src/domain/*"]
+        }
     }
 }
