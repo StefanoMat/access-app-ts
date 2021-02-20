@@ -6,7 +6,6 @@ describe('Register Controller', () => {
   test('Should return 400 if no name is provided', async () => {
     const httpRequest = {
       body: {
-        name: 'any_name',
         email: 'any_email@mail.com',
         password: 'any_pass',
         tipo_id: 1,
