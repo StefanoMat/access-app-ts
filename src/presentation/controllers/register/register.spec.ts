@@ -1,6 +1,6 @@
 import { RegisterController } from './register'
-import { badRequest } from '../../helpers/http-helper'
-import { MissingParamError } from '../../errors'
+import { badRequest, serverError, ok } from '../../helpers/http-helper'
+import { MissingParamError, ServerError } from '../../errors'
 import { AddUser, AddUserModel, UserModel, HttpRequest } from '../../controllers/register/register-protocols'
 
 const makeAddUser = (): AddUser => {
@@ -123,5 +123,21 @@ describe('Register Controller', () => {
       typeId: 'valid_type_id',
       status: 'valid_status'
     })
+  })
+
+  test('Should return 500 if AddUser throws', async () => {
+    const { sut, addUserStub } = makeSut()
+    jest.spyOn(addUserStub, 'add').mockImplementationOnce(async () => {
+      return await new Promise((resolve, reject) => reject(new Error()))
+    })
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse).toEqual(serverError(new ServerError(null)))
+  })
+
+  test('Should return 200 if valid data is provided', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(ok(makeFakeUser()))
   })
 })
