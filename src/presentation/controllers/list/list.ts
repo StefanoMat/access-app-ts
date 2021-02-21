@@ -1,6 +1,7 @@
 import { Controller, HttpRequest, HttpResponse } from '../../protocols'
 import { serverError, ok, notFound } from '../../helpers/http-helper'
 import { GetUser } from '../../../domain/usecases/get-user'
+import { NotFoundError } from '../../errors/not-found-error'
 
 export class ListController implements Controller {
   constructor (private readonly getUser: GetUser) {}
@@ -10,7 +11,7 @@ export class ListController implements Controller {
       const { id } = httpRequest.params
       const user = await this.getUser.getById(id)
       if (!user) {
-        return notFound('user')
+        return notFound(new NotFoundError('User'))
       }
       return ok(user)
     } catch (error) {

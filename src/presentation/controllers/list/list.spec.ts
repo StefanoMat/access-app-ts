@@ -1,5 +1,5 @@
 import { ListController } from './list'
-import { GetUser, GetUserParams } from '../../../domain/usecases/get-user'
+import { GetUser } from '../../../domain/usecases/get-user'
 import { UserModel } from '../../../domain/models/user'
 import { HttpRequest } from '../../protocols'
 import { serverError, ok } from '../../helpers/http-helper'
@@ -7,7 +7,7 @@ import { ServerError } from '../../errors'
 
 const makeGetUser = (): GetUser => {
   class GetUserStub implements GetUser {
-    async getById (param: GetUserParams): Promise<UserModel> {
+    async getById (param: number): Promise<UserModel> {
       return await new Promise(resolve => resolve(makeFakeUser()))
     }
   }
