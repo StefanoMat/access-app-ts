@@ -16,7 +16,7 @@ export const ok = (data: any): HttpResponse => ({
   body: data
 })
 
-export const notFound = (error: string): HttpResponse => ({
+export const notFound = (error: Error): HttpResponse => ({
   statusCode: 404,
   body: error
 })
