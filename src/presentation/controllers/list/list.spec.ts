@@ -2,8 +2,9 @@ import { ListController } from './list'
 import { GetUser } from '../../../domain/usecases/get-user'
 import { UserModel } from '../../../domain/models/user'
 import { HttpRequest } from '../../protocols'
-import { serverError, ok } from '../../helpers/http-helper'
+import { serverError, ok, notFound } from '../../helpers/http-helper'
 import { ServerError } from '../../errors'
+import { NotFoundError } from '../../errors/not-found-error'
 
 const makeGetUser = (): GetUser => {
   class GetUserStub implements GetUser {
@@ -56,6 +57,16 @@ describe('List Controller', () => {
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse).toEqual(serverError(new ServerError(null)))
+  })
+
+  test('Should return 404 if User not found', async () => {
+    const { sut, getUserStub } = makeSut()
+    jest.spyOn(getUserStub, 'getById').mockImplementationOnce(async () => {
+      return await new Promise((resolve, reject) => resolve(null))
+    })
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse.statusCode).toBe(404)
+    expect(httpResponse).toEqual(notFound(new NotFoundError('User')))
   })
 
   test('Should return 200 if valid param is provided', async () => {
