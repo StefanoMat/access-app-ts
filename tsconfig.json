@@ -1,14 +1,11 @@
 {
     "compilerOptions": {
+        "experimentalDecorators": true,
+        "strictPropertyInitialization": false,
         "outDir": "./dist",
         "module": "commonjs",
         "target": "es2019",
         "allowJs": true,
-        "esModuleInterop": true,
-        "baseUrl": ".",
-        "paths": {
-            "@data/*": ["src/data/*"],
-            "@domain/*": ["src/domain/*"]
-        }
+        "esModuleInterop": true
     }
 }
