@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "sucrase-node src/main/server.ts",
-    "test": "jest"
+    "test": "jest",
+    "test:co": "jest --coverage"
   },
   "repository": {
     "type": "git",

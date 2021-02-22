@@ -3,8 +3,10 @@ import { AddUserModel } from '../../../../domain/usecases/add-user'
 import { UserModel } from '../../../../domain/models/user'
 import { getConnection } from 'typeorm'
 import { GetUserRepository } from '../../../../data/protocols/get-user-repository'
+import { UpdateUserRepository } from '../../../../data/protocols/update-user-repository'
+import { UpdateUserModel } from '../../../../domain/usecases/update-user'
 
-export class UserRepository implements AddUserRepository, GetUserRepository {
+export class UserRepository implements AddUserRepository, GetUserRepository, UpdateUserRepository {
   async add (userData: AddUserModel): Promise<UserModel> {
     const result = await getConnection().createQueryBuilder()
       .insert()
@@ -28,5 +30,24 @@ export class UserRepository implements AddUserRepository, GetUserRepository {
       .where('u.id = :id', { id: id })
       .getRawOne()
     return result
+  }
+
+  async updateById (id: number, data: UpdateUserModel): Promise<UserModel> {
+    const query = await getConnection().createQueryBuilder()
+      .update('public.user')
+    if (data.name) {
+      query.set({
+        name: data.name
+      })
+    }
+    if (data.typeId) {
+      query.set({
+        type_id: data.typeId
+      })
+    }
+    const result = await query.where('id = :id', { id: id })
+      .returning('id, name, email, type_id, status')
+      .execute()
+    return result.raw[0]
   }
 }
