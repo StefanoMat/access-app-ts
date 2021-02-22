@@ -4,7 +4,7 @@ import { GetUser } from '../../../domain/usecases/get-user'
 import { NotFoundError } from '../../errors/not-found-error'
 import { UpdateUser } from '../../../domain/usecases/update-user'
 
-export class Update implements Controller {
+export class UpdateController implements Controller {
   constructor (
     private readonly updateUser: UpdateUser,
     private readonly getUser: GetUser
