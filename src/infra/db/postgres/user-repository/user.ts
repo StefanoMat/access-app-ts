@@ -5,9 +5,10 @@ import { getConnection } from 'typeorm'
 import { GetUserRepository } from '../../../../data/protocols/get-user-repository'
 import { UpdateUserRepository } from '../../../../data/protocols/update-user-repository'
 import { UpdateUserModel } from '../../../../domain/usecases/update-user'
-import { UpdateStatusUser } from '../../../../domain/usecases/update-status-user'
+import { UpdateStatusUserRepository } from '../../../../data/protocols/update-status-user-repository'
+import { DeleteUserRepository } from '../../../../data/protocols/delete-user-repository'
 
-export class UserRepository implements AddUserRepository, GetUserRepository, UpdateUserRepository, UpdateStatusUser {
+export class UserRepository implements AddUserRepository, GetUserRepository, UpdateUserRepository, UpdateStatusUserRepository, DeleteUserRepository {
   async add (userData: AddUserModel): Promise<UserModel> {
     const result = await getConnection().createQueryBuilder()
       .insert()
@@ -62,5 +63,14 @@ export class UserRepository implements AddUserRepository, GetUserRepository, Upd
       .returning('id, name, email, type_id, status')
       .execute()
     return result.raw[0]
+  }
+
+  async deleteById (id: number): Promise<boolean> {
+    const result = await getConnection().createQueryBuilder()
+      .delete()
+      .from('public.user', 'user')
+      .where('id = :id', { id: id })
+      .execute()
+    return result.affected > 0
   }
 }
