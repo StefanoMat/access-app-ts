@@ -1,4 +1,4 @@
-import { ListController } from './list'
+import { FindController } from './find'
 import { GetUser } from '../../../domain/usecases/get-user'
 import { UserModel } from '../../../domain/models/user'
 import { HttpRequest } from '../../protocols'
@@ -32,16 +32,16 @@ const makeFakeUser = (): UserModel => ({
 })
 
 interface SutTypes {
-  sut: ListController
+  sut: FindController
   getUserStub: GetUser
 }
 const makeSut = (): SutTypes => {
   const getUserStub = makeGetUser()
-  const sut = new ListController(getUserStub)
+  const sut = new FindController(getUserStub)
   return { sut, getUserStub }
 }
 
-describe('List Controller', () => {
+describe('Find Controller', () => {
   test('Should call GetUser with correct value', async () => {
     const { sut, getUserStub } = makeSut()
     const getByIdSpy = jest.spyOn(getUserStub, 'getById')

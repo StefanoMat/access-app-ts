@@ -1,12 +1,12 @@
 import { UserRepository } from '../../infra/db/postgres/user-repository/user'
-import { ListController } from '../../presentation/controllers/list/list'
+import { FindController } from '../../presentation/controllers/find/find'
 import { DataGetUser } from '../../data/usecases/get-user/data-get-user'
 import { LogControllerDecorator } from '../decorators/log'
 import { Controller } from '../../presentation/protocols'
 
-export const makeListController = (): Controller => {
+export const makeFindController = (): Controller => {
   const userRepository = new UserRepository()
   const dataGetUser = new DataGetUser(userRepository)
-  const listController = new ListController(dataGetUser)
-  return new LogControllerDecorator(listController)
+  const findController = new FindController(dataGetUser)
+  return new LogControllerDecorator(findController)
 }

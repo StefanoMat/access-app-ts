@@ -3,7 +3,7 @@ import { serverError, ok, notFound } from '../../helpers/http-helper'
 import { GetUser } from '../../../domain/usecases/get-user'
 import { NotFoundError } from '../../errors/not-found-error'
 
-export class ListController implements Controller {
+export class FindController implements Controller {
   constructor (private readonly getUser: GetUser) {}
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
