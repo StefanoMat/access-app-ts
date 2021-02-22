@@ -5,8 +5,9 @@ import { getConnection } from 'typeorm'
 import { GetUserRepository } from '../../../../data/protocols/get-user-repository'
 import { UpdateUserRepository } from '../../../../data/protocols/update-user-repository'
 import { UpdateUserModel } from '../../../../domain/usecases/update-user'
+import { UpdateStatusUser } from '../../../../domain/usecases/update-status-user'
 
-export class UserRepository implements AddUserRepository, GetUserRepository, UpdateUserRepository {
+export class UserRepository implements AddUserRepository, GetUserRepository, UpdateUserRepository, UpdateStatusUser {
   async add (userData: AddUserModel): Promise<UserModel> {
     const result = await getConnection().createQueryBuilder()
       .insert()
@@ -46,6 +47,18 @@ export class UserRepository implements AddUserRepository, GetUserRepository, Upd
       })
     }
     const result = await query.where('id = :id', { id: id })
+      .returning('id, name, email, type_id, status')
+      .execute()
+    return result.raw[0]
+  }
+
+  async updateStatusById (id: number, status: boolean): Promise<UserModel> {
+    const result = await getConnection().createQueryBuilder()
+      .update('public.user')
+      .set({
+        status: status
+      })
+      .where('id = :id', { id: id })
       .returning('id, name, email, type_id, status')
       .execute()
     return result.raw[0]
