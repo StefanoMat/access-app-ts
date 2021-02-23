@@ -2,7 +2,7 @@ import { Controller } from '../../presentation/protocols'
 import { LoginController } from '../../presentation/controllers/login/login'
 import { LogControllerDecorator } from '../decorators/log'
 import { BcryptAdapter } from '../../infra/criptography/bcrypt-adapter'
-import { JwtAdapter } from '../../infra/criptography/jwt.adapter'
+import { JwtAdapter } from '../../infra/criptography/jwt-adapter'
 import { UserAccountRepository } from '../../infra/db/postgres/user-repository/user-account'
 import { DataAuthentication } from '../../data/usecases/authentication/data-authentication'
 
