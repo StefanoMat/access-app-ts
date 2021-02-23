@@ -37,5 +37,5 @@ npm test
 ### #Decorator
 
 ## Melhorias para realizar
-Implementar caching, ampliar cobertura de testes, testes em pasta única, DTOs
+Implementar caching, ampliar cobertura de testes, testes em pasta única, DTOs  
 última regra de alteração do usuário
