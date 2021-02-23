@@ -31,12 +31,6 @@ const makeFakeRequest = (): HttpRequest => ({
   }
 })
 
-// const makeFakeServerError = (): HttpResponse => {
-//   const fakeError = new Error()
-//   fakeError.stack = 'any_stack_error'
-//   return serverError(fakeError)
-// }
-
 interface SutTypes {
   sut: LogControllerDecorator
   controllerStub: Controller
