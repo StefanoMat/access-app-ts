@@ -3,11 +3,12 @@ import { serverError, ok, forbidden } from '../helpers/http-helper'
 import { HttpResponse } from '../protocols'
 import { GetUserAccountByToken } from '../../domain/usecases/get-user-account-by-token'
 import { AccessForbiddenError } from '../errors/access-forbidden-error'
+import { TypeEnum } from '../../domain/models/enum/type-enum'
 
 export class AuthMiddleware implements Middleware {
   constructor (
     private readonly getUserAccountByToken: GetUserAccountByToken,
-    private readonly role?: string
+    private readonly role?: TypeEnum[]
   ) {}
 
   async handle (request: AuthMiddleware.Request): Promise<HttpResponse> {
