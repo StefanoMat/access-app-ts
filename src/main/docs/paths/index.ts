@@ -1,1 +1,7 @@
 export * from './login'
+export * from './register'
+export * from './update'
+export * from './update-status'
+export * from './delete'
+export * from './find'
+export * from './list-type'

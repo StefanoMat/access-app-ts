@@ -1,8 +1,8 @@
 
-export const loginPath = {
-  tags: ['Acesso'],
-  summary: 'Autenticar usuário',
-  description: 'Essa rota pode ser acessada por todos os usuários',
+export const updateStatusPath = {
+  tags: ['Usuario'],
+  summary: 'Atulizar status do usuário',
+  description: 'Essa rota pode ser acessada por usuários ROOT e ADMIN',
   requestBody: {
     required: true,
     content: {
@@ -10,11 +10,8 @@ export const loginPath = {
         schema: {
           type: 'object',
           properties: {
-            email: {
-              type: 'string'
-            },
-            password: {
-              type: 'string'
+            status: {
+              type: 'boolean'
             }
           }
         }

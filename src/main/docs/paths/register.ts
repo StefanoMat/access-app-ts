@@ -1,8 +1,8 @@
 
-export const loginPath = {
+export const registerPath = {
   tags: ['Acesso'],
-  summary: 'Autenticar usuário',
-  description: 'Essa rota pode ser acessada por todos os usuários',
+  summary: 'Cadastrar usuário',
+  description: 'Essa rota pode ser acessada por usuários ROOT e ADMIN',
   requestBody: {
     required: true,
     content: {
@@ -10,11 +10,20 @@ export const loginPath = {
         schema: {
           type: 'object',
           properties: {
+            name: {
+              type: 'string'
+            },
             email: {
               type: 'string'
             },
             password: {
               type: 'string'
+            },
+            typeId: {
+              type: 'integer'
+            },
+            status: {
+              type: 'boolean'
             }
           }
         }
