@@ -36,5 +36,6 @@ npm test
 ### #Adapter
 ### #Decorator
 
-##Melhorias para realizar
+## Melhorias para realizar
 Implementar caching, ampliar cobertura de testes, testes em pasta única, DTOs
+última regra de alteração do usuário
