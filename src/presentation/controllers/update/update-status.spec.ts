@@ -1,10 +1,11 @@
-import { UpdateController } from './update'
+import { UpdateStatusController } from './update-status'
+import { UpdateStatusUser } from '../../../domain/usecases/update-status-user'
 import { GetUser } from '../../../domain/usecases/get-user'
-import { UpdateUser, UpdateUserModel } from '../../../domain/usecases/update-user'
 import { UserModel } from '../../../domain/models/user'
-import { HttpRequest } from '../../protocols'
-import { serverError, ok, notFound } from '../../helpers/http-helper'
+import { serverError, badRequest, ok, notFound } from '../../helpers/http-helper'
 import { ServerError } from '../../errors'
+import { HttpRequest } from '../../protocols'
+import { InvalidParamError } from '../../errors/invalid-param-error'
 import { NotFoundError } from '../../errors/not-found-error'
 
 const makeGetUser = (): GetUser => {
@@ -17,14 +18,14 @@ const makeGetUser = (): GetUser => {
   return new GetUserStub()
 }
 
-const makeUpdateUser = (): UpdateUser => {
-  class UpdateUserStub implements UpdateUser {
-    async updateById (id: number, data: UpdateUserModel): Promise<UserModel> {
+const makeUpdateStatusUser = (): UpdateStatusUser => {
+  class UpdateStatusUserStub implements UpdateStatusUser {
+    async updateStatusById (id: number, status: boolean): Promise<UserModel> {
       return await new Promise(resolve => resolve(makeFakeUser()))
     }
   }
 
-  return new UpdateUserStub()
+  return new UpdateStatusUserStub()
 }
 
 const makeFakeUser = (): UserModel => ({
@@ -40,24 +41,37 @@ const makeFakeRequest = (): HttpRequest => ({
     id: 'any_id'
   },
   body: {
-    name: 'any_name',
-    typeId: 'valid_id'
+    status: false
   }
 })
 
 interface SutTypes {
-  sut: UpdateController
-  updateUserStub: UpdateUser
+  sut: UpdateStatusController
+  updateStatusUserStub: UpdateStatusUser
   getUserStub: GetUser
 }
 const makeSut = (): SutTypes => {
   const getUserStub = makeGetUser()
-  const updateUserStub = makeUpdateUser()
-  const sut = new UpdateController(updateUserStub, getUserStub)
-  return { sut, updateUserStub, getUserStub }
+  const updateStatusUserStub = makeUpdateStatusUser()
+  const sut = new UpdateStatusController(updateStatusUserStub, getUserStub)
+  return { sut, updateStatusUserStub, getUserStub }
 }
 
 describe('Update Controller', () => {
+  test('Should return 400 if invalid status is provided', async () => {
+    const { sut } = makeSut()
+    const httpRequest = {
+      params: {
+        id: 'any_id'
+      },
+      body: {
+        status: 'not_bool'
+      }
+    }
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(badRequest(new InvalidParamError('status')))
+  })
+
   test('Should return 500 if GetUser throws', async () => {
     const { sut, getUserStub } = makeSut()
     jest.spyOn(getUserStub, 'getById').mockImplementationOnce(async () => {
@@ -68,28 +82,14 @@ describe('Update Controller', () => {
     expect(httpResponse).toEqual(serverError(new ServerError(null)))
   })
 
-  test('Should return 500 if UpdateUser throws', async () => {
-    const { sut, updateUserStub } = makeSut()
-    jest.spyOn(updateUserStub, 'updateById').mockImplementationOnce(async () => {
+  test('Should return 500 if UpdateStatusUser throws', async () => {
+    const { sut, updateStatusUserStub } = makeSut()
+    jest.spyOn(updateStatusUserStub, 'updateStatusById').mockImplementationOnce(async () => {
       return await new Promise((resolve, reject) => reject(new Error()))
     })
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse).toEqual(serverError(new ServerError(null)))
-  })
-
-  test('Should call GetUser with correct value', async () => {
-    const { sut, getUserStub } = makeSut()
-    const getByIdSpy = jest.spyOn(getUserStub, 'getById')
-    await sut.handle(makeFakeRequest())
-    expect(getByIdSpy).toHaveBeenCalledWith('any_id')
-  })
-
-  test('Should call UpdateUser with correct value', async () => {
-    const { sut, updateUserStub } = makeSut()
-    const updateByIdSpy = jest.spyOn(updateUserStub, 'updateById')
-    await sut.handle(makeFakeRequest())
-    expect(updateByIdSpy).toHaveBeenCalledWith('any_id', { name: 'any_name', typeId: 'valid_id' })
   })
 
   test('Should return 404 if User not found', async () => {

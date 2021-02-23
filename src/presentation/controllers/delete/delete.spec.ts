@@ -1,9 +1,9 @@
-import { UpdateController } from './update'
 import { GetUser } from '../../../domain/usecases/get-user'
-import { UpdateUser, UpdateUserModel } from '../../../domain/usecases/update-user'
 import { UserModel } from '../../../domain/models/user'
+import { DeleteController } from './delete'
+import { DeleteUser } from '../../../domain/usecases/delete-user'
 import { HttpRequest } from '../../protocols'
-import { serverError, ok, notFound } from '../../helpers/http-helper'
+import { serverError, badRequest, notFound, noContent } from '../../helpers/http-helper'
 import { ServerError } from '../../errors'
 import { NotFoundError } from '../../errors/not-found-error'
 
@@ -17,14 +17,14 @@ const makeGetUser = (): GetUser => {
   return new GetUserStub()
 }
 
-const makeUpdateUser = (): UpdateUser => {
-  class UpdateUserStub implements UpdateUser {
-    async updateById (id: number, data: UpdateUserModel): Promise<UserModel> {
-      return await new Promise(resolve => resolve(makeFakeUser()))
+const makeDeleteUser = (): DeleteUser => {
+  class DeleteUserStub implements DeleteUser {
+    async deleteById (id: number): Promise<boolean> {
+      return await new Promise(resolve => resolve(true))
     }
   }
 
-  return new UpdateUserStub()
+  return new DeleteUserStub()
 }
 
 const makeFakeUser = (): UserModel => ({
@@ -35,29 +35,27 @@ const makeFakeUser = (): UserModel => ({
   typeId: 1,
   status: true
 })
+
 const makeFakeRequest = (): HttpRequest => ({
   params: {
     id: 'any_id'
-  },
-  body: {
-    name: 'any_name',
-    typeId: 'valid_id'
   }
 })
 
 interface SutTypes {
-  sut: UpdateController
-  updateUserStub: UpdateUser
+  sut: DeleteController
+  deleteUserStub: DeleteUser
   getUserStub: GetUser
 }
+
 const makeSut = (): SutTypes => {
   const getUserStub = makeGetUser()
-  const updateUserStub = makeUpdateUser()
-  const sut = new UpdateController(updateUserStub, getUserStub)
-  return { sut, updateUserStub, getUserStub }
+  const deleteUserStub = makeDeleteUser()
+  const sut = new DeleteController(deleteUserStub, getUserStub)
+  return { sut, deleteUserStub, getUserStub }
 }
 
-describe('Update Controller', () => {
+describe('Delete Controller', () => {
   test('Should return 500 if GetUser throws', async () => {
     const { sut, getUserStub } = makeSut()
     jest.spyOn(getUserStub, 'getById').mockImplementationOnce(async () => {
@@ -68,9 +66,9 @@ describe('Update Controller', () => {
     expect(httpResponse).toEqual(serverError(new ServerError(null)))
   })
 
-  test('Should return 500 if UpdateUser throws', async () => {
-    const { sut, updateUserStub } = makeSut()
-    jest.spyOn(updateUserStub, 'updateById').mockImplementationOnce(async () => {
+  test('Should return 500 if DeleteUser throws', async () => {
+    const { sut, deleteUserStub } = makeSut()
+    jest.spyOn(deleteUserStub, 'deleteById').mockImplementationOnce(async () => {
       return await new Promise((resolve, reject) => reject(new Error()))
     })
     const httpResponse = await sut.handle(makeFakeRequest())
@@ -78,21 +76,7 @@ describe('Update Controller', () => {
     expect(httpResponse).toEqual(serverError(new ServerError(null)))
   })
 
-  test('Should call GetUser with correct value', async () => {
-    const { sut, getUserStub } = makeSut()
-    const getByIdSpy = jest.spyOn(getUserStub, 'getById')
-    await sut.handle(makeFakeRequest())
-    expect(getByIdSpy).toHaveBeenCalledWith('any_id')
-  })
-
-  test('Should call UpdateUser with correct value', async () => {
-    const { sut, updateUserStub } = makeSut()
-    const updateByIdSpy = jest.spyOn(updateUserStub, 'updateById')
-    await sut.handle(makeFakeRequest())
-    expect(updateByIdSpy).toHaveBeenCalledWith('any_id', { name: 'any_name', typeId: 'valid_id' })
-  })
-
-  test('Should return 404 if User not found', async () => {
+  test('Should return 404 if user is null', async () => {
     const { sut, getUserStub } = makeSut()
     jest.spyOn(getUserStub, 'getById').mockImplementationOnce(async () => {
       return await new Promise((resolve, reject) => resolve(null))
@@ -102,9 +86,10 @@ describe('Update Controller', () => {
     expect(httpResponse).toEqual(notFound(new NotFoundError('User')))
   })
 
-  test('Should return 200 if valid fields are provided', async () => {
+  test('Should return 204 if does not throws', async () => {
     const { sut } = makeSut()
     const httpResponse = await sut.handle(makeFakeRequest())
-    expect(httpResponse).toEqual(ok(makeFakeUser()))
+    expect(httpResponse.statusCode).toBe(204)
+    expect(httpResponse).toEqual(noContent())
   })
 })

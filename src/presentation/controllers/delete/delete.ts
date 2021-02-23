@@ -1,5 +1,5 @@
 import { GetUser } from '../../../domain/usecases/get-user'
-import { serverError, notFound, ok, noContent } from '../../helpers/http-helper'
+import { serverError, notFound, noContent } from '../../helpers/http-helper'
 import { HttpResponse, HttpRequest, Controller } from '../../protocols'
 import { NotFoundError } from '../../errors/not-found-error'
 import { DeleteUser } from '../../../domain/usecases/delete-user'
