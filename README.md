@@ -10,7 +10,7 @@ Documentação swagger e link para a PostmanCollection
 ## Como iniciar?
 
 ## Variáveis de ambiente 
-configure o arquivo .ENV do root para apontar a porta do servidor Node, chave JWT e servidor do banco
+configure o arquivo .env do root para apontar a porta do servidor Node, chave JWT e servidor do banco
 
 ## Crie o banco de dados
 Crie uma base PostegreSQL ou utilize a base do .env.example
