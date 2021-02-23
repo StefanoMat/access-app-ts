@@ -3,7 +3,7 @@ import { UserModel } from '../../../domain/models/user'
 import { DeleteController } from './delete'
 import { DeleteUser } from '../../../domain/usecases/delete-user'
 import { HttpRequest } from '../../protocols'
-import { serverError, badRequest, notFound, noContent } from '../../helpers/http-helper'
+import { serverError, notFound, noContent } from '../../helpers/http-helper'
 import { ServerError } from '../../errors'
 import { NotFoundError } from '../../errors/not-found-error'
 
