@@ -1,5 +1,5 @@
 # access-app-ts
-
+## This project was developed using DDD and SOLID concepts
 ## Rotas
 Documentação swagger e link para a PostmanCollection
 ```
