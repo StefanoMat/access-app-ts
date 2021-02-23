@@ -1,5 +1,4 @@
 # access-app-ts
-This repository is created to develop a integration between Pipedrive and Bling! with NodeJS
 
 ## Rotas
 Documentação swagger e link para a PostmanCollection
